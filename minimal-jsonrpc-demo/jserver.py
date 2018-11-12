@@ -1,7 +1,8 @@
 # minimalistic server example from 
 # https://github.com/seprich/py-bson-rpc/blob/master/README.md#quickstart
-
 import socket
+import pickle
+from node import *
 from bsonrpc import JSONRpc
 from bsonrpc import request, service_class
 from bsonrpc.exceptions import FramingError
@@ -22,9 +23,27 @@ class ServerServices(object):
     print(txt)
     return txt
 
+
+  @request
+  def increment(self,mystr):
+    print(mystr)  
+    pickled = mystr.encode('unicode-escape')
+    print("Should be fixed")
+    print(pickled)
+    
+    loadedRoot = pickle.load(pickled)
+    print("This should show fixed")
+    loadedRoot.show()
+    #root = pickle.loads(pickledRoot)  
+    #root.show()
+    #increment(root)
+    #myReturnRoot = pickle.dumps(root)
+    #return myReturnRoot
+        
+        
 # Quick-and-dirty TCP Server:
 ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-ss.bind(('localhost', 50001))
+ss.bind(('localhost', 50007))
 ss.listen(10)
 
 while True:
