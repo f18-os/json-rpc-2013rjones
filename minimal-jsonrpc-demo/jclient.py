@@ -3,6 +3,7 @@
 
 import socket
 import pickle
+import os
 import base64
 from node import *
 from bsonrpc import JSONRpc
@@ -12,7 +13,7 @@ from bsonrpc.framing import (
 
 # Cut-the-corners TCP Client:
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('localhost', 50007))
+s.connect(('localhost', 50009))
 
 rpc = JSONRpc(s,framing_cls=JSONFramingNone)
 server = rpc.get_peer_proxy()
@@ -35,23 +36,20 @@ root = node("root", [leaf1, leaf1, leaf2])
 
 print("graph before increment")
 root.show()
+myFile = 'request.json'
 
-pickledRoot = pickle.dumps(root)
+with open(myFile, "wb") as f:
+        pickle.dump(root, f)
 
-print(pickledRoot)
+server.increment(myFile)
 
-mystr = pickledRoot.decode('unicode-escape')
 
-print()
-
-print("Converted")
-print(mystr)
-server.increment(mystr)
-
-#root = pickle.loads(pickledRoot)
-
-#print("graph after increment")
-#root.show()
+#should now have an incremented root
+with open(myFile, 'rb') as f:
+        root = pickle.load(f)
+        
+print("graph after increment")
+root.show()
 
 rpc.close() # Closes the socket 's' also
 
