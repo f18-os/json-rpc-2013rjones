@@ -25,25 +25,23 @@ class ServerServices(object):
 
 
   @request
-  def increment(self,mystr):
-    print(mystr)  
-    pickled = mystr.encode('unicode-escape')
-    print("Should be fixed")
-    print(pickled)
+  def increment(self,fileName):
+    #print('fileName: '+ fileName)
     
-    loadedRoot = pickle.load(pickled)
-    print("This should show fixed")
-    loadedRoot.show()
-    #root = pickle.loads(pickledRoot)  
-    #root.show()
-    #increment(root)
-    #myReturnRoot = pickle.dumps(root)
-    #return myReturnRoot
-        
+    #print('Trying load')
+    with open(fileName, 'rb') as f:
+                root = pickle.load(f)
+       
+    increment(root)
+    #dump back the incremented root
+    with open(fileName, "wb") as f:
+        pickle.dump(root, f)
+    
+    
         
 # Quick-and-dirty TCP Server:
 ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-ss.bind(('localhost', 50007))
+ss.bind(('localhost', 50009))
 ss.listen(10)
 
 while True:
